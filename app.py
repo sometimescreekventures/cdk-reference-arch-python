@@ -3,26 +3,20 @@ import os
 
 import aws_cdk as cdk
 
-from cdk_reference_arch_python.cdk_reference_arch_python_stack import CdkReferenceArchPythonStack
-
+from s3.s3_stack import S3Stack
+from networking.networking_stack import NetworkingStack
+from storage.storage_stack import StorageStack
 
 app = cdk.App()
-CdkReferenceArchPythonStack(app, "CdkReferenceArchPythonStack",
-    # If you don't specify 'env', this stack will be environment-agnostic.
-    # Account/Region-dependent features and context lookups will not work,
-    # but a single synthesized template can be deployed anywhere.
 
-    # Uncomment the next line to specialize this stack for the AWS Account
-    # and Region that are implied by the current CLI configuration.
+dev_env=cdk.Environment(account='99999', region='us-east-1')
 
-    #env=cdk.Environment(account=os.getenv('CDK_DEFAULT_ACCOUNT'), region=os.getenv('CDK_DEFAULT_REGION')),
+networking_stack = NetworkingStack(app, "DevNetworking", env=dev_env)
 
-    # Uncomment the next line if you know exactly what Account and Region you
-    # want to deploy the stack to. */
+S3Stack(app, "DevS3", env=dev_env)
 
-    #env=cdk.Environment(account='123456789012', region='us-east-1'),
+StorageStack(app, "DevStorage", env=dev_env, NetworkingStack=networking_stack)
 
-    # For more information, see https://docs.aws.amazon.com/cdk/latest/guide/environments.html
-    )
+
 
 app.synth()
